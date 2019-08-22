@@ -13,7 +13,7 @@ x = len(ENV)-1
 y = len(ENV[0])-1
 
 expend = [[0,0,-10,0,0,0],
-          [0,0,-10,0,0,0],
+          [0,-10,-10,0,0,0],
           [0,0,0,0,-10,0],
           [0,0,-10,-10,-10,0],
           [0,0,0,0,-10,0]]
@@ -25,7 +25,7 @@ dirc = [[1,0],
        [-1,0],
        [0,1],
        [0,-1]]
-start = [0,0,0]
+start = [[0,0,0]]
 now_grid = [[1,0,0],[3,5,6],[0,0,0],[0,5,6]]
 length = len(now_grid)-1
 mark = [[0,0]]
@@ -53,25 +53,27 @@ def min_grid(now_grid):
             
 def mov(now_grid,mark,dirc,ENV,count,expend):
     goal = False
-    
-    if now_grid[1] == 4 and now_grid[2] == 5:
-        goal = True
+    for each_grid in now_grid:
+        if each_grid[1] == 4 and each_grid[2] == 5:
+            goal = True
     if goal:
         return now_grid,expend
     else:
         count += 1
         A = []
-        for each_dir in dirc:
-            new_grid = [now_grid[0]+1,now_grid[1]+each_dir[0],now_grid[2]+each_dir[1]]
-            new_grid[0] += (new_grid[1]-4)**2+(new_grid[2]-5)**2
-            if 0<=new_grid[1]<=4 and 0<=new_grid[2]<=5:
-                if ENV[new_grid[1]][new_grid[2]] != 1:
-                    if [new_grid[1],new_grid[2]] not in mark:
-                        A.append(new_grid)
-                        mark.append([new_grid[1],new_grid[2]])
+        for each_grid in now_grid:
+            for each_dir in dirc:
+                new_grid = [each_grid[0]+1,each_grid[1]+each_dir[0],each_grid[2]+each_dir[1]]
+                new_grid[0] += (new_grid[1]-4)**2+(new_grid[2]-5)**2
+                if 0<=new_grid[1]<=4 and 0<=new_grid[2]<=5:
+                    if ENV[new_grid[1]][new_grid[2]] != 1:
+                        if [new_grid[1],new_grid[2]] not in mark:
+                            A.append(new_grid)
+                            mark.append([new_grid[1],new_grid[2]])
         order = find_grid(A,len(A)-1)
-        min_grid_ = order[0]
-        expend[min_grid_[1]][min_grid_[2]] = count
+        min_grid_ = min_grid(order)
+        for each_min in min_grid_:
+            expend[each_min[1]][each_min[2]] = count
         
         
         return mov(min_grid_,mark,dirc,ENV,count,expend)
@@ -95,7 +97,8 @@ def draw(expend,dirc,x,y,path,sign):
 
 A = find_grid(now_grid,length)
 B = min_grid(A)
-now_gird,expend = mov(start,mark,dirc,ENV,count,expend)
+now_grid,expend = mov(start,mark,dirc,ENV,count,expend)
 
 path = draw(expend,dirc,x,y,path,sign)
+print(expend)
 print(path)
