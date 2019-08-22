@@ -9,9 +9,18 @@ ENV = [[0,0,1,0,0,0],
        [0,0,0,0,1,0],
        [0,0,1,1,1,0],
        [0,0,0,0,1,0]]
+x = len(ENV)-1
+y = len(ENV[0])-1
 
-expend = [[0 for row in range(len(ENV[0]))] for col in range(len(ENV))]
+expend = [[0,0,-10,0,0,0],
+          [0,0,-10,0,0,0],
+          [0,0,0,0,-10,0],
+          [0,0,-10,-10,-10,0],
+          [0,0,0,0,-10,0]]
+path = [['$' for row in range(len(ENV[0]))] for col in range(len(ENV))]
+
 count = 0
+sign = ['↑','↓','←','→']
 dirc = [[1,0],
        [-1,0],
        [0,1],
@@ -63,13 +72,43 @@ def mov(now_grid,mark,dirc,ENV,count,expend):
                             mark.append([new_grid[1],new_grid[2]])
         order = find_grid(A,len(A)-1)
         min_grid_ = min_grid(order)
-        print(min_grid_)
+        
         
         return mov(min_grid_,mark,dirc,ENV,count,expend)
         
-
+def draw(expend,dirc,x,y,path,sign):
+    now_point = expend[x][y]
+    for i in range(len(dirc)):
+        new_x = x + dirc[i][0]
+        new_y = y + dirc[i][1]
+        if 0 <= new_x <= 4 and 0 <= new_y <= 5:
+            if expend[new_x][new_y] == expend[x][y] - 1:
+                path[new_x][new_y] = sign[i]
+                x,y = new_x,new_y
+                if x == 0 and y == 0:
+                    return path
+                else:
+                    
+                    return draw(expend,dirc,x,y,path,sign)
+                    
+                
+         
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 A = find_grid(now_grid,length)
 B = min_grid(A)
 now_gird,expend = mov(start,mark,dirc,ENV,count,expend)
-print(expend)
+
+path = draw(expend,dirc,x,y,path,sign)
+print(path)
